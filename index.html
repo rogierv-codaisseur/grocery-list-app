@@ -93,17 +93,19 @@
     <form onsubmit="submitItem(); return false">
       <input type="number" id="number-of-items">
       <input type="text" id="new-item" placeholder="What item you want to add?">
+      <!-- Hidden submit button -->
+      <input type="submit" value="Add" style="display: none" />
     </form>
 
     <ul id="itemlist">
       <li class="item">
         <input id="item-1" type="checkbox" onchange="toggleDone.bind(this)()">
-        <label for="item-1">Bananas</label>
+        <label for="item-1">6 Bananas</label>
       </li>
       <li class="item completed">
         <input id="item-2" type="checkbox" checked="checked" onchange="toggleDone.bind(this)()"">
         <label for="
-          item-2">Milk</label>
+          item-2">2 Milk</label>
       </li>
     </ul>
     <div class="footer">
