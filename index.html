@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Grocery List</title>
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 18px;
+    }
+
+    .container {
+      margin: 20px auto;
+      width: 500px;
+      border: 1px solid #e6e6e6;
+      border-radius: 3px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      padding: 0 0 20px;
+      display: flex;
+    }
+
+    input#number-of-items {
+      width: 35px;
+      border-radius: 3px;
+      border: 1px solid #e6e6e6;
+      padding: 10px;
+      font-size: 18px;
+    }
+
+    input#new-item {
+      display: block;
+      width: 478px;
+      border-radius: 3px;
+      border: 1px solid #e6e6e6;
+      padding: 10px;
+      font-size: 18px;
+    }
+
+    ul#itemlist {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul#itemlist li {
+      padding: 5px;
+      border: 1px solid #e6e6e6;
+      border-radius: 3px;
+    }
+
+    ul#itemlist li:hover {
+      background-color: #e6e6e6;
+    }
+
+    ul#itemlist .item.completed label {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .footer {
+      margin-top: 10px;
+      background: #323232;
+      color: #e6e6e6;
+      padding: 5px;
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    .footer a:link,
+    .footer a:hover,
+    .footer a:visited {
+      color: #e6e6e6;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Grocery List</h1>
+
+    <form onsubmit="submitItem(); return false">
+      <input type="number" id="number-of-items">
+      <input type="text" id="new-item" placeholder="What item you want to add?">
+    </form>
+
+    <ul id="itemlist">
+      <li class="item">
+        <input id="item-1" type="checkbox" onchange="toggleDone.bind(this)()">
+        <label for="item-1">Bananas</label>
+      </li>
+      <li class="item completed">
+        <input id="item-2" type="checkbox" checked="checked" onchange="toggleDone.bind(this)()"">
+        <label for="
+          item-2">Milk</label>
+      </li>
+    </ul>
+    <div class="footer">
+      Item: <span id="item-count">1</span> •
+      Done: <span id="completed-count">0</span> •
+      Total: <span id="total-count">1</span>
+
+      <!-- link to clean up items that are done -->
+      <a href="#" onclick="cleanUpDoneItems(); return false">Clean up</a>
+    </div>
+  </div>
+
+  <script>
+    function submitItem() {
+      const inputFieldNumber = document.getElementById("number-of-items");
+      const inputField = document.getElementById("new-item");
+      const newItemQuantity = inputFieldNumber.value;
+      const newItemTitle = inputField.value;
+      createItem(newItemQuantity, newItemTitle);
+
+      // reset the value of the inputField to make it empty and
+      // ready to create new items
+      inputFieldNumber.value = null;
+      inputField.value = null;
+
+      updateCounters();
+    }
+
+    function createItem(quantity, title) {
+      // create a list item
+      const listItem = document.createElement("li");
+      listItem.className = "item";
+
+      // create a checkbox and add it to the list item
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = "item-" + nextItemId();
+      checkbox.checked = false;
+      // assign the toggleDone function on the checkbox's onchange event
+      checkbox.onchange = toggleDone.bind(checkbox);
+      listItem.appendChild(checkbox);
+
+      // create some whitespace to put between the checkbox and the label
+      const space = document.createTextNode(" ");
+      listItem.appendChild(space);
+
+      // create a label that holds the title and add it to the list item
+      const label = document.createElement("label");
+      label.htmlFor = checkbox.id;
+      label.innerHTML = quantity + " " + title;
+      listItem.appendChild(label);
+
+      // add the list item with the checkbox, the whitespace and the label to
+      // the list
+      const list = document.getElementById("itemlist");
+      list.appendChild(listItem);
+    }
+
+    // Every item has it's own id so we can add that to the corresponding label's
+    // "for" attribute to make sure that when we click the label, the checkbox
+    // toggles
+    function nextItemId() {
+      return document.getElementsByClassName("item").length + 1;
+    }
+
+    function updateCounters() {
+      // Total number of items
+      const totalCount = document.getElementById('total-count');
+      const totalItems = document.getElementsByClassName('item').length;
+      totalCount.innerHTML = totalItems;
+
+      // Total number of completed items
+      const completedCount = document.getElementById('completed-count');
+      const completedItems = document.getElementsByClassName('completed').length;
+      completedCount.innerHTML = completedItems;
+
+      // Total number of uncompleted items
+      const itemCount = document.getElementById('item-count');
+      const uncompletedItems = totalItems - completedItems;
+      itemCount.innerHTML = uncompletedItems;
+    }
+
+    function toggleDone() {
+      const checkbox = this;
+
+      // check the checked status of the checkbox
+      if (checkbox.checked) {
+        // the "completed" class is set on the parent element, the <li>
+        checkbox.parentElement.className = "item completed";
+      } else {
+        checkbox.parentElement.className = "item";
+      }
+
+      updateCounters();
+    }
+
+    function cleanUpDoneItems() {
+      const list = document.getElementById("itemlist");
+      const doneItems = document.getElementsByClassName("completed");
+
+      // Reverse loop through the done item items so we can remove them without changing the index of the remaining items when we remove them
+      for (let i = doneItems.length; i > 0; i--) {
+        list.removeChild(doneItems[i - 1]);
+      }
+
+      updateCounters();
+    }
+
+    updateCounters();
+  </script>
+
+</body>
+
+</html>
